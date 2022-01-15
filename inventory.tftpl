@@ -1,0 +1,15 @@
+[all]
+%{ for group, ips in inventory ~}
+%{ for ip in ips ~}
+${ip}
+%{ endfor ~}
+%{ endfor ~}
+
+%{ for group, ips in inventory ~}
+%{ if length(ips) > 0 ~}
+[${group}]
+%{ endif ~}
+%{ for ip in ips ~}
+${ip}
+%{ endfor ~}
+%{ endfor ~}
