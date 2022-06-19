@@ -3,7 +3,7 @@ variable "proxmox_host" {
   type        = string
 }
 
-variable "node_template_name" {
+variable "template_name" {
   description = "Name of the cloudinit template to clone."
   type        = string
 }
@@ -14,16 +14,16 @@ variable "network_gateway" {
 }
 
 variable "authorized_keys" {
-  description = "Path to the file containing public SSH key(s) for remote access to nodes."
+  description = "Path to the file containing public SSH key(s) for remote access to VMs."
   type        = string
 }
 
-variable "node_types" {
-  description = "Map of different node size configurtions."
+variable "vm_types" {
+  description = "Map of different VM size configurations."
   type        = map(any)
 }
 
-variable "nodes" {
-  description = "Map of node groups you want to create and the configuration to go with it."
+variable "pools" {
+  description = "Map of VM pools you want to create and the configuration to go with it."
   type        = map(any)
 }
