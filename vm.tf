@@ -37,9 +37,9 @@ resource "proxmox_vm_qemu" "vm" {
 
   disk {
     slot     = 0
-    size     = var.vm_types[each.value.type].storage
+    size     = var.vm_types[each.value.type].disk_size
     type     = "scsi"
-    storage  = "local-lvm"
+    storage  = each.value.disk_storage
     iothread = 1
   }
 

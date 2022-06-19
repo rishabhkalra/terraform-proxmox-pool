@@ -24,7 +24,7 @@ Yes! You can find it here on the [official Terraform Registry](https://registry.
 ```terraform
 module "cluster" {
   source = "rishabhkalra/pool/proxmox"
-  version = "0.1.1"
+  version = "0.2.1"
 
   proxmox_host = "proxmox"
 
@@ -38,17 +38,17 @@ module "cluster" {
     sm = {
       cores = 2
       memory = 1024
-      storage = "5G"
+      disk_size = "5G"
     },
     md = {
       cores = 2
       memory = 4096
-      storage = "10G"
+      disk_size = "10G"
     },
     lg = {
       cores = 4
       memory = 8192
-      storage = "20G"
+      disk_size = "20G"
     }
   }
 
@@ -58,18 +58,21 @@ module "cluster" {
       vm_ips = ["x.x.x.x/x", "y.y.y.y/y"] # list of IPs that will be used for this pool
       vm_type = "sm" # note that this type must match a type defined in the vm_types map above
       vm_count = 0
+      disk_storage = "local-lvm" # set the storage type based on whatever you're using in proxmox
     },
     control_plane = {
       vm_prefix = "control_plane"
       vm_subnet = ["x.x.x.x/x", ...]
       vm_type = "md"
       vm_count = 0
+      disk_storage = "local-lvm"
     },
     agents = {
       vm_prefix = "agent"
       vm_subnet = ["x.x.x.x/x", ...]
       vm_type = "lg"
       vm_count = 0
+      disk_storage = "local-lvm"
     }
   }
 }
