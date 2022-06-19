@@ -1,7 +1,7 @@
 [all]
 %{ for group, ips in inventory ~}
 %{ for ip in ips ~}
-${ip}
+${split("/", ip)[0]}
 %{ endfor ~}
 %{ endfor ~}
 
@@ -10,6 +10,6 @@ ${ip}
 [${group}]
 %{ endif ~}
 %{ for ip in ips ~}
-${ip}
+${split("/", ip)[0]}
 %{ endfor ~}
 %{ endfor ~}

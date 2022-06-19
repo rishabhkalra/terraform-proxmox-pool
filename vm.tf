@@ -1,50 +1,43 @@
 locals {
-  node_list = flatten([
-    for node in var.nodes : [
-      for i in range(node.node_count) :
-      merge(node, {
-        id      = i
-        node_ip = cidrhost(node.node_subnet, i)
-      })
+  vm_list = flatten([
+    for pool in var.pools : [
+      for i in range(pool.vm_count) : {
+        id     = i
+        ip     = pool.vm_ips[i]
+        prefix = pool.vm_prefix
+        type   = pool.vm_type
+    }]
     ]
-  ])
+  )
 
-  node_map = {
-    for node in local.node_list : "${node.node_prefix}-${node.id + 1}" => node
+  vm_map = {
+    for vm in local.vm_list : "${vm.prefix}-${vm.id + 1}" => vm
   }
 
-  node_inventory = {
-    for i in var.nodes : i.node_prefix => [for instance in local.node_list : instance.node_ip if instance.node_prefix == i.node_prefix]
-  }
-}
-
-resource "random_uuid" "node_identifier" {
-  for_each = local.node_map
-
-  keepers = {
-    node_id = "${each.value.node_prefix}-${each.value.id + 1}"
+  vm_inventory = {
+    for pool in var.pools : pool.vm_prefix => [for vm in local.vm_list : vm.ip if vm.prefix == pool.vm_prefix]
   }
 }
 
 resource "proxmox_vm_qemu" "vm" {
-  for_each = local.node_map
+  for_each = local.vm_map
 
   target_node = var.proxmox_host
-  name        = "${each.value.node_prefix}-${random_uuid.node_identifier[each.key].result}"
-  clone       = var.node_template_name
+  name        = each.key
+  clone       = var.template_name
 
   agent    = 1
   os_type  = "cloud-init"
-  cores    = var.node_types[each.value.node_type].cores
+  cores    = var.vm_types[each.value.type].cores
   sockets  = 1
   cpu      = "host"
-  memory   = var.node_types[each.value.node_type].memory
+  memory   = var.vm_types[each.value.type].memory
   scsihw   = "virtio-scsi-pci"
   bootdisk = "scsi0"
 
   disk {
     slot     = 0
-    size     = var.node_types[each.value.node_type].storage
+    size     = var.vm_types[each.value.type].storage
     type     = "scsi"
     storage  = "local-lvm"
     iothread = 1
@@ -61,7 +54,7 @@ resource "proxmox_vm_qemu" "vm" {
     ]
   }
 
-  ipconfig0 = "ip=${each.value.node_ip}/${split("/", each.value.node_subnet)[1]},gw=${var.network_gateway}"
+  ipconfig0 = "ip=${each.value.ip},gw=${var.network_gateway}"
 
   sshkeys = file(var.authorized_keys)
 }
