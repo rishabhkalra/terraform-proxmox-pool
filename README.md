@@ -24,17 +24,17 @@ Yes! You can find it here on the [official Terraform Registry](https://registry.
 ```terraform
 module "cluster" {
   source = "rishabhkalra/pool/proxmox"
-  version = "0.0.1"
+  version = "0.1.1"
 
   proxmox_host = "proxmox"
 
-  node_template_name = "template_name"
+  template_name = "template_name"
 
   network_gateway = "x.x.x.x"
 
   authorized_keys = "authorized_keys"
 
-  node_types = {
+  vm_types = {
     sm = {
       cores = 2
       memory = 1024
@@ -52,24 +52,24 @@ module "cluster" {
     }
   }
 
-  nodes = {
+  pools = {
     support = {
-      node_prefix = "support" # node names will use be of the format 'node_prefix-uuid'
-      node_subnet = "x.x.x.x/x"
-      node_type = "sm" # note that this type must match a type defined in the node_types map above
-      node_count = 0
+      vm_prefix = "support" # vm names will use be of the format 'vm_prefix-vm_number'
+      vm_ips = ["x.x.x.x/x", "y.y.y.y/y"] # list of IPs that will be used for this pool
+      vm_type = "sm" # note that this type must match a type defined in the vm_types map above
+      vm_count = 0
     },
     control_plane = {
-      node_prefix = "control_plane"
-      node_subnet = "x.x.x.x/x"
-      node_type = "md"
-      node_count = 0
+      vm_prefix = "control_plane"
+      vm_subnet = ["x.x.x.x/x", ...]
+      vm_type = "md"
+      vm_count = 0
     },
     agents = {
-      node_prefix = "agent"
-      node_subnet = "x.x.x.x/x"
-      node_type = "lg"
-      node_count = 0
+      vm_prefix = "agent"
+      vm_subnet = ["x.x.x.x/x", ...]
+      vm_type = "lg"
+      vm_count = 0
     }
   }
 }
