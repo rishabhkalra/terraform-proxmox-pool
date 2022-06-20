@@ -2,10 +2,11 @@ locals {
   vm_list = flatten([
     for pool in var.pools : [
       for i in range(pool.vm_count) : {
-        id     = i
-        ip     = pool.vm_ips[i]
-        prefix = pool.vm_prefix
-        type   = pool.vm_type
+        id           = i
+        ip           = pool.vm_ips[i]
+        prefix       = pool.vm_prefix
+        type         = pool.vm_type
+        disk_storage = pool.disk_storage
     }]
     ]
   )
