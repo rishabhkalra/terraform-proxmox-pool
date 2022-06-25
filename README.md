@@ -24,7 +24,7 @@ Yes! You can find it here on the [official Terraform Registry](https://registry.
 ```terraform
 module "cluster" {
   source = "rishabhkalra/pool/proxmox"
-  version = "0.2.1"
+  version = "0.2.3"
 
   proxmox_host = "proxmox"
 
